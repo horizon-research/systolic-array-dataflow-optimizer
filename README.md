@@ -54,8 +54,8 @@ There are three parts consisted all the flags
 
 2. options that are related to search options
   * `--static` :  to set the flag if static partition the buffer enable
-  * `--split` : enable to split the convolution kernel into small sub-kernels
-  * `--combine` : enable to combine the sub-kernels durting compute
+  * `--split` : enable to split the deconvolution kernel into small sub-kernels
+  * `--combine` : enable to combine the sub-kernels during compute
   * `--model_type` : DNN model convolution type: 2D or 3D.
   * `--ifmap` : the ifmap dimemsion, order: [W H C]
   * `--ifmap3d` : the ifmap dimemsion, order: [W H D C]
