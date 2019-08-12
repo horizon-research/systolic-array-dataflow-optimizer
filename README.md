@@ -43,3 +43,25 @@ By specify the configuration in the input option and a particular DNN network
 you want to optimize, the optimizer will return a dataflow scheme for you. The
 sample DNN networks are in the `/dnns` directory.
 
+
+## Explanation of each option flags
+
+There are three parts consisted all the flags
+
+1. input and output files
+  * `--dnnfile` : the actual dnn dataflow file to optimize.
+  * `--outfile` : the file to dump all the result.
+
+2. options that are related to search options
+  * `--static` :  to set the flag if static partition the buffer enable
+  * `--split` : enable to split the convolution kernel into small sub-kernels
+  * `--combine` : enable to combine the sub-kernels durting compute
+  * `--model_type` : DNN model convolution type: 2D or 3D.
+  * `--ifmap` : the ifmap dimemsion, order: [W H C]
+  * `--ifmap3d` : the ifmap dimemsion, order: [W H D C]
+  * `--buffer_partition` : the ifmap dimemsion, order: [I O W]
+  * `--search_method` : there are three search options: "Constrained",
+     "Exhaustive", "Combined", the first one is to use constrained optimization,
+     "Exhaustive" is a exhaustive search with the combination of DP.
+     "Combine" is to use static partition to set initial guess values for 
+     constrained optimization and then use constrained optimization.
