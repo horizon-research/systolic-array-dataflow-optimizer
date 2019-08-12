@@ -65,3 +65,9 @@ There are three parts consisted all the flags
      "Exhaustive" is a exhaustive search with the combination of DP.
      "Combine" is to use static partition to set initial guess values for 
      constrained optimization and then use constrained optimization.
+
+3. other hardware configurations
+  * `--bufsize`, in Btyes
+  * `--memory_bandwidth`, in GB/s
+  * `--sa_size`, Systolic array size"
+  * `--bit_width`, Bit Width of each value (typically, 8-bit, 16-bit, 32-bit)
