@@ -3,6 +3,7 @@
 This is a DNN dataflow optimizer for a particular hardware accelerator, systolic
 array. it is able to find a optimal or `approximately` optimal dataflow for a
 particular DNN for some hardware constraints, such as bandwidth and SRAM, etc.
+The original repository is here: <https://github.com/YuFengUofR/dataflow_optimizer>.
 
 ## Why
 
