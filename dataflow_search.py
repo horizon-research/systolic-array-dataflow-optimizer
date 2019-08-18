@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
 
 import argparse
 import numpy as np
 import scipy
 import sys
 import pprint
+import json
 
 # import my own modules
 import dnn_optimizer
@@ -24,14 +24,16 @@ argparser.add_argument("--combine", type=bool, default=False,
                         help="enable to combine the sub-kernels durting compute")
 argparser.add_argument("--model_type", default="2D", choices=["2D", "3D"],
                         help="DNN model convolution type: 2D or 3D.")
-argparser.add_argument("--ifmap", nargs="+", type=int, required=True,
+argparser.add_argument("--ifmap", nargs="+", type=int, required=False,
                         help="the ifmap dimemsion, order: [W H C]")
 argparser.add_argument("--ifmap3d", nargs="+", type=int, required=False,
                         help="the ifmap dimemsion, order: [W H D C]")
+argparser.add_argument("--buffer_partition", nargs="+", type=float,
+                        help="the ifmap dimemsion, order: [I O W]")
 argparser.add_argument("--search_method", default="Constrained",
-                        choices=["Constrained", "Exhaustive"],
+                        choices=["Constrained", "Exhaustive", "Combined"],
                         help="Dataflow search methods: constraint optoimization"
-                        " or exhaustive search.")
+                        ", exhaustive search or combining both.")
 
 # other hardware configurations
 argparser.add_argument("--bufsize", type=float, default=1048576.0*1.5,
@@ -82,9 +84,9 @@ def import_dnn(filename, ifmap_dim, ifmap3d_dim):
                 # increase the deconv ofmap by two, as default,
                 # we only consider stride of 1
                 ifmap_dim = [ifmap_dim[0]*2/prev_layer["stride"], \
-                            ifmap_dim[1]*2/prev_layer["stride"], \
-                            prev_layer["out_channel"]]
-            else: 
+                             ifmap_dim[1]*2/prev_layer["stride"], \
+                             prev_layer["out_channel"]]
+            else:
                 # if it is Conv, scale down the ifmap dimemsion by stride;
                 ifmap_dim = [ifmap_dim[0]/prev_layer["stride"], \
                             ifmap_dim[1]/prev_layer["stride"], \
@@ -104,22 +106,21 @@ def import_dnn(filename, ifmap_dim, ifmap3d_dim):
                 # increase the deconv ofmap by two, as default,
                 # we only consider stride of 1
                 ifmap3d_dim = [ifmap3d_dim[0]*2/prev_layer["stride"], \
-                            ifmap_dim[1]*2/prev_layer["stride"], \
-                            ifmap_dim[2]*2/prev_layer["stride"], \
-                            prev_layer["out_channel"]]
-            else: 
+                               ifmap3d_dim[1]*2/prev_layer["stride"], \
+                               ifmap3d_dim[2]*2/prev_layer["stride"], \
+                               prev_layer["out_channel"]]
+            else:
                 # if it is Conv, scale down the ifmap dimemsion by stride;
                 ifmap3d_dim = [ifmap3d_dim[0]/prev_layer["stride"], \
-                            ifmap3d_dim[1]/prev_layer["stride"], \
-                            ifmap3d_dim[2]/prev_layer["stride"],  \
-                            prev_layer["out_channel"]]  
-
+                               ifmap3d_dim[1]/prev_layer["stride"], \
+                               ifmap3d_dim[2]/prev_layer["stride"],  \
+                               prev_layer["out_channel"]]
 
     return dnn
 
 # The hardware constraints are:
-#   1. the on-chip buffer size; 
-#   2. the memory bandwidth; (Unit in bytes/cycle) 
+#   1. the on-chip buffer size;
+#   2. the memory bandwidth; (Unit in bytes/cycle)
 #   3. the systolic array size;
 def hardware_constraints(sa_size=16.0, mem_bw=6.4*4, buf=1048576.0*1.5, bit_width=16.0):
     systolic_arr_size = sa_size;
@@ -135,6 +136,8 @@ def system_config(args, meta_data):
     meta_data["schedule"]["static"] = args.static
     meta_data["schedule"]["split"] = args.split
     meta_data["schedule"]["combine"] = args.combine
+    if args.buffer_partition:
+        meta_data["buffer_partition"] = args.buffer_partition
 
     # setup the system;
     meta_data["system_info"] = {}
@@ -154,13 +157,13 @@ if __name__== "__main__":
 
     # import the dnn
     dnn = import_dnn(args.dnnfile, args.ifmap, args.ifmap3d)
-    pprint.pprint(dnn)
     meta_data["dnn"] = dnn
     hw_constraints = hardware_constraints(sa_size=args.sa_size,
-             mem_bw=args.memory_bandwidth, buf=args.bufsize, bit_width=args.bit_width)
+                                          mem_bw=args.memory_bandwidth,
+                                          buf=args.bufsize,
+                                          bit_width=args.bit_width)
 
     # start the optimization main routine
-    res = dnn_optimizer.opti_dnn(meta_data, hw_constraints)
+    meta_data["dnn_result"] = dnn_optimizer.opti_dnn(meta_data, hw_constraints)
 
     pprint.pprint(meta_data)
-
