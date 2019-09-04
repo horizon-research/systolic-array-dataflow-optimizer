@@ -174,7 +174,7 @@ There are three parts consisted all the flags
     array dimension is 16 by 16.
   * `--bit_width`, Bit Width of each value (typically, 8-bit, 16-bit, 32-bit)
 
-## how to specify a DNN configuration
+## How to specify a DNN configuration
 
 We provide a simple way to To specify the configuration (or architecture) of
 each DNN layer, the example is shown in `/dnns.
