@@ -63,13 +63,16 @@ This will load the DNN network from `flowNetC.txt` and search the DNN dataflow
 using Constrained optimization. You can use `--search_method` option to specify
 what kind of search method to use. We provide two different options, one is
 `Constrained`, which uses constrained optimization, the other one is `Exhaustive`,
-which uses exhaustive search.
+which uses exhaustive search. This command also specifies the ifmap size to be
+960-576-6 (width-height-channel). 
 
 In this command, we also provide the hardware configuration. `bufsize` specifies that 
 the on-chip buffer size is *1572864* bytes. `memory_bandwidth` specifies the memory
 bandwidth is *25.6* GB/s. `sa_size` specifies that the systolic array size is *16*.
 The `bitwidth` specifies the number of bits used to represent the numerical precision
-for a single number. For details of other flags, please see the explanation below.
+for a single number. 
+
+For details of other flags, please see the explanation below.
 
 The dataflow optimization will print the result as a JSON-like format. The example result
 is shown below:
