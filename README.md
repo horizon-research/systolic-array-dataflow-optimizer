@@ -180,4 +180,19 @@ The layer parameters are separated by `,`, the order of the specification is:
 ofmap channels, kernel height, hernel width, stride, flag to indicate whether
 it is a deconvolution layer.
 
+## Citing
 
+This project implements the configurable point cloud registration pipeline described in the following paper:
+
+Y. Feng,  P. Whatmough, and Y. Zhu, "ASV: Accelerated Stereo Vision System", In Proc. of MICRO, 2019.
+
+Please kindly consider citing this paper in your publications if it helps your research.
+```
+@inproceedings{yu2019asv,
+  title={ASV: Accelerated Stereo Vision System},
+  author={Feng, Yu and Whatmough, Paul and Zhu, Yuhao},
+  booktitle={Proceedings of the 52th International Symposium on Microarchitecture},
+  year={2019},
+  organization={ACM}
+}
+```
