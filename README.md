@@ -3,6 +3,7 @@
 This is a DNN dataflow optimizer for a particular hardware accelerator, systolic
 array. it is able to find a optimal or `approximately` optimal dataflow for a
 particular DNN for some hardware constraints, such as bandwidth and SRAM, etc.
+This repository is the artifact of our paper *ASV: Accelerated Stereo Vision System*.
 The original repository is here: <https://github.com/YuFengUofR/dataflow_optimizer>.
 
 ## Why
@@ -27,12 +28,11 @@ There are two main parts in this framework:
 
 2. The layer-level optimizers to optimize different
 
-* `layer_base_method.py`
-* `layer_optimizer.py`
-* `layer_exhaustive_searcher.py`
+* `layer(3d)_base_method.py`
+* `layer(3d)_static_method.py`
+* `layer(3d)_optimizer.py`
+* `layer(3d)_exhaustive_searcher.py`
 * `deconv_exhaustive_searcher.py`
-
-You can run the example dataflow optimization by `runner.sh`.
 
 ## How to use
 
@@ -45,6 +45,96 @@ To use the dataflow optimizer, you can run for helping info:
 By specify the configuration in the input option and a particular DNN network
 you want to optimize, the optimizer will return a dataflow scheme for you. The
 sample DNN networks are in the `/dnns` directory.
+
+A simple example of using this tool on a dnn.
+```
+  $ python dataflow_search.py --dnnfile dnns/flowNetC.txt \
+        --model_type 2D \
+        --search_method Constrained \
+        --split True\
+        --bufsize 1572864 \
+        --bit_width 16 \
+        --memory_bandwidth 25.6 \
+        --sa_size 16 \
+        --model_type 2D \
+        --ifmap 960 576 6
+```
+This will load the DNN network from `flowNetC.txt` and search the DNN dataflow
+using Constrained optimization. You can use `--search_method` option to specify
+what kind of search method to use. We provide two different options, one is
+`Constrained`, which uses constrained optimization, the other one is `Exhaustive`,
+which uses exhaustive search.
+
+In this command, we also provide the hardware configuration. `bufsize` specifies that 
+the on-chip buffer size is *1572864* bytes. `memory_bandwidth` specifies the memory
+bandwidth is *25.6* GB/s. `sa_size` specifies that the systolic array size is *16*.
+The `bitwidth` specifies the number of bits used to represent the numerical precision
+for a single number. For details of other flags, please see the explanation below.
+
+The dataflow optimization will print the result as a JSON-like format. The example result
+is shown below:
+
+```
+{'dnn': [{'Deconv?': False,
+          'ifmap': [960, 576, 6],
+          'kernel': [7, 7],
+          'out_channel': 64,
+          'stride': 2,
+          'type': '2D'},
+          ......
+          
+         {'Deconv?': True,
+          'ifmap': [120.0, 72.0, 128],
+          'kernel': [5, 5],
+          'out_channel': 64,
+          'stride': 1,
+          'type': '2D'}],
+ 'dnn_result': [{'data': {'Deconv?': False,
+                          'ifmap': [960, 576, 6],
+                          'kernel': [7, 7],
+                          'ofmap': [480.0, 288.0, 64],
+                          'out_channel': 64,
+                          'stride': 2,
+                          'type': '2D'},
+                 'result': {'Bound': 'C',
+                            'Tile size': [1.0, 8.0, 5.0],
+                            'buffer_utilization': 0.7890045166015626,
+                            'c_0, w_0, h_0': [64, 120, 115],
+                            'systolic_array_utilization': 1.0,
+                            'total_cycle': 40642560,
+                            'total_transfer': 85029312}},
+                ......
+                
+                {'data': {'Deconv?': True,
+                          'ifmap': [120.0, 72.0, 128],
+                          'kernel': [5, 5],
+                          'out_channel': 64,
+                          'stride': 1,
+                          'type': '2D'},
+                 'result': [{'Bound': 'C',
+                             'Tile size': [1.0, 2.0, 1.0],
+                             'buffer_utilization': 0.6793619791666666,
+                             'c_0, w_0, h_0': [64, 60, 72],
+                             'systolic_array_utilization': 1.0,
+                             'total_cycle': 6912000,
+                             'total_transfer': 2690048}]}],
+ 'method': 'Constrained',
+ 'schedule': {'combine': True, 'split': True, 'static': False},
+ 'system_info': {'bit_width': 16.0,
+                 'bufsize': 1572864.0,
+                 'memory_bandwidth': 25.6,
+                 'sa_size': 16.0}}
+```
+
+It has a couple of fields:
+  * `method` : the method you specified for dataflow search.
+  * `schedule` : the optimization options you specified for deconvolution.
+    Please check out our paper for more details one this.
+  * `system_info` : this specifies the hardware configurations.
+  * `dnn` : the architecture of you DNN network.
+  * `dnn_result` : the optimization result for your dnn. 
+
+You can run more examples of dataflow optimization by `runner.sh`.
 
 ## Explanation of each option flags
 
