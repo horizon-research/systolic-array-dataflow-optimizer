@@ -79,7 +79,7 @@ The dataflow optimization will print the result as a JSON-like format. The examp
 is shown below:
 
 ```
-{'dnn': [{'Deconv?': False,
+{'dnn': [{'Deconv?': False,                                  <--------- DNN architecture
           'ifmap': [960, 576, 6],
           'kernel': [7, 7],
           'out_channel': 64,
@@ -93,7 +93,7 @@ is shown below:
           'out_channel': 64,
           'stride': 1,
           'type': '2D'}],
- 'dnn_result': [{'data': {'Deconv?': False,
+ 'dnn_result': [{'data': {'Deconv?': False,                 <-------- optimization result
                           'ifmap': [960, 576, 6],
                           'kernel': [7, 7],
                           'ofmap': [480.0, 288.0, 64],
