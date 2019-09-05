@@ -37,7 +37,7 @@ There are two main parts in this framework:
 
 ## How to use
 
-Pre-requisite packages: scipy, numpy, sys, pprint
+Pre-requisite packages: scipy, numpy, sys, math, pprint
 
 To use the dataflow optimizer, you can run for helping info:
 
