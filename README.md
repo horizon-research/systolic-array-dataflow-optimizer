@@ -7,7 +7,7 @@ This repository is the artifact of our paper *ASV: Accelerated Stereo Vision Sys
 
 The original repository is here: <https://github.com/YuFengUofR/dataflow_optimizer>.
 
-## Why
+## What's new
 
 The goal of this optimizer are followings:
 
@@ -101,12 +101,12 @@ is shown below:
                           'stride': 2,
                           'type': '2D'},
                  'result': {'Bound': 'C',
-                            'Tile size': [1.0, 8.0, 5.0],
+                            'Tile size': [1.0, 8.0, 5.0],               # tiling schedule
                             'buffer_utilization': 0.7890045166015626,
-                            'c_0, w_0, h_0': [64, 120, 115],
+                            'c_0, w_0, h_0': [64, 120, 115],            # tile size
                             'systolic_array_utilization': 1.0,
-                            'total_cycle': 40642560,
-                            'total_transfer': 85029312}},
+                            'total_cycle': 40642560,                    # execution cycles
+                            'total_transfer': 85029312}},               # DRAM access (in Bytes)
                 ......
                 
                 {'data': {'Deconv?': True,
@@ -116,14 +116,14 @@ is shown below:
                           'stride': 1,
                           'type': '2D'},
                  'result': [{'Bound': 'C',
-                             'Tile size': [1.0, 2.0, 1.0],
+                             'Tile size': [1.0, 2.0, 1.0],              # tiling schedule
                              'buffer_utilization': 0.6793619791666666,
-                             'c_0, w_0, h_0': [64, 60, 72],
+                             'c_0, w_0, h_0': [64, 60, 72],             # tile size
                              'systolic_array_utilization': 1.0,
-                             'total_cycle': 6912000,
-                             'total_transfer': 2690048}]}],
+                             'total_cycle': 6912000,                    # execution cycles
+                             'total_transfer': 2690048}]}],             # DRAM access (in Bytes)
  'method': 'Constrained',
- 'schedule': {'combine': True, 'split': True, 'static': False},
+ 'schedule': {'combine': True, 'split': True, 'static': False},         # optimization flags
  'system_info': {'bit_width': 16.0,
                  'bufsize': 1572864.0,
                  'memory_bandwidth': 25.6,
