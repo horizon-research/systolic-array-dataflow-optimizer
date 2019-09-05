@@ -16,16 +16,16 @@ The goal of this optimizer are followings:
 * Second, this optimizer explores different searching or optimization schemes,
   so that, we can show the trade-off between different optimization schemes.
 * Third, this optimizer can automatically apply a special optimization for
-  deconvolutions in the DNN pipeline, and we have different levels of opti-
-  mizations to explore.
+  deconvolutions in the DNN pipeline, and we have different levels of optimizations
+  to explore.
 
 ## What's inside
 
 There are two main parts in this framework:
 1. The overall framework to drive different optimizers.
 
-* `dnn_optimizer.py`
 * `dataflow_search.py`
+* `dnn_optimizer.py`
 
 2. The layer-level optimizers to optimize different
 
@@ -37,7 +37,7 @@ There are two main parts in this framework:
 
 ## How to use
 
-Pre-requisites: scipy, numpy, sys
+Pre-requisite packages: scipy, numpy, sys, pprint
 
 To use the dataflow optimizer, you can run for helping info:
 
