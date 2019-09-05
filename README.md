@@ -37,6 +37,8 @@ There are two main parts in this framework:
 
 ## How to use
 
+Pre-requisites: scipy, numpy, sys
+
 To use the dataflow optimizer, you can run for helping info:
 
 ```
@@ -140,6 +142,37 @@ It has a couple of fields:
 
 You can run more examples of dataflow optimization by `runner.sh`.
 
+### How to specify a DNN configuration
+
+We provide a simple way to specify the configuration (or architecture) of
+each DNN layer, the example is shown in `/dnns.
+
+The layer parameters are separated by `,`, the order of the specification is:
+ofmap channels, kernel height, kernel width, stride, flag to indicate whether
+it is a deconvolution layer. 
+
+A simple example for 2D DNN is shown below:
+```
+# ofmap channels, kernel height, kernel width, stride,deconv?
+64,7,7,2,False
+128,5,5,2,False
+...
+
+128,5,5,1,True
+64,5,5,1,True
+```
+
+Asimple example for 3D DNN is shown here:
+```
+# ofmap channels, kernel height, kernel width, kernel depth, stride, deconv?
+32,3,3,3,1,False
+32,3,3,3,1,False
+...
+
+64,3,3,3,1,True
+32,3,3,3,1,True
+```
+
 ## Explanation of each option flags
 
 There are three parts consisted all the flags
@@ -174,15 +207,6 @@ There are three parts consisted all the flags
   * `--sa_size`, the systolic array dimension, e.g. 16 stands for the systolic
     array dimension is 16 by 16.
   * `--bit_width`, Bit Width of each value (typically, 8-bit, 16-bit, 32-bit)
-
-## How to specify a DNN configuration
-
-We provide a simple way to To specify the configuration (or architecture) of
-each DNN layer, the example is shown in `/dnns.
-
-The layer parameters are separated by `,`, the order of the specification is:
-ofmap channels, kernel height, hernel width, stride, flag to indicate whether
-it is a deconvolution layer.
 
 ## Citing
 
