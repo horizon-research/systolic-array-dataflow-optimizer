@@ -185,7 +185,7 @@ it is a deconvolution layer.
 
 ## Citing
 
-This project implements the configurable point cloud registration pipeline described in the following paper:
+This project is a artifact of our 2019 MICRO paper:
 
 Y. Feng,  P. Whatmough, and Y. Zhu, "ASV: Accelerated Stereo Vision System", In Proc. of MICRO, 2019.
 
