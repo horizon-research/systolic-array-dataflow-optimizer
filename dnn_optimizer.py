@@ -170,8 +170,8 @@ def opti_dnn(meta_data, hardware_constraints):
             else:
                 data["ofmap"] = [0] * len(data["ifmap"])
                 # scale up the ifmap to the ifmap based on the stride size.
-                for i in range(len(data["ifmap"])-1):
-                    data["ifmap"][i] = layer["ifmap"][i]*2/layer["stride"]
+                for j in range(len(data["ifmap"])-1):
+                    data["ifmap"][j] = layer["ifmap"][j]*2/layer["stride"]
                     data["ofmap"][j] = layer["ifmap"][j]/layer["stride"]
 
                 # the last element is ofmap channel, so treat it separately
