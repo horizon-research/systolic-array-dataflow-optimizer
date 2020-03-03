@@ -51,6 +51,8 @@ class LayerBaseMethod(object):
         self.Co = layer_info["out_channel"]
         [self.K_w, self.K_h] = layer_info["kernel"]
         self.S = layer_info["stride"]
+        self.W /= self.S
+        self.H /= self.S
 
     ###############################################################
     #                       general process                       #
@@ -62,10 +64,13 @@ class LayerBaseMethod(object):
         return (x[0]*x[1]*x[2] + self.Ci*self.K_h*self.K_w*x[0]
                 + self.Ci*(self.S*x[1]+self.K_h/2)*(self.S*x[2]+self.K_h/2))
 
+    def total_batch_number(self, h_0, w_0, c_0):
+        return math.ceil(self.H*self.W*self.Co / (h_0*w_0*c_0))
+
     # (ofmap + ifmap)*total_batch + (ofmap+weights)*Co/c_0
     def row_major_data_transfer(self, h_0, w_0, c_0):
         # calculate the total batch
-        total_batch = self.H*self.W*self.Co / (h_0*w_0*c_0)
+        total_batch = self.total_batch_number(h_0, w_0, c_0)
 
         # ofmap, ifmap and kernel tile size
         ofmap_tile_size = h_0*w_0*c_0
@@ -83,7 +88,7 @@ class LayerBaseMethod(object):
     # (ofmap + weights)*total_batch + (ofmap+ifmap)*(H*W)/(h_0*w_0)
     def channel_major_data_transfer(self, h_0, w_0, c_0):
         # calculate the total batch
-        total_batch = self.H*self.W*self.Co / (h_0*w_0*c_0)
+        total_batch = self.total_batch_number(h_0, w_0, c_0)
 
         # ofmap and ifmap tile size
         ofmap_tile_size = h_0*w_0*c_0
@@ -95,7 +100,7 @@ class LayerBaseMethod(object):
 
         # add additional data transfer
         total_transfer += (ofmap_tile_size + ifmap_tile_size) \
-                        * self.H*self.W / (h_0*w_0*self.S*self.S)
+                        * self.H*self.W / (h_0*w_0)
 
         return total_transfer
 
@@ -111,7 +116,7 @@ class LayerBaseMethod(object):
     def compute_bound_cycle(self, util_rate):
         # total number of ops
         total_computation = (self.H*self.W*self.Co) * \
-                            (self.Ci*self.K_h*self.K_w) / (self.S * self.S)
+                            (self.Ci*self.K_h*self.K_w) 
 
         # systolic array calculation capacity
         comp_cap = (self.A*self.A) * util_rate
