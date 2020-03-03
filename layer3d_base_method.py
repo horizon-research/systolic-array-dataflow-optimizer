@@ -70,7 +70,7 @@ class Layer3dBaseMethod(LayerBaseMethod):
         return self.weight_tile(self.Co)
 
     # variables for optimization
-    # this two has been encodes as x[3] = {c_0, h_0, w_0, d_0};
+    # this two has been encodes as x[4] = {c_0, h_0, w_0, d_0};
     # c_0  # number of channels per batch;
     # h_0, w_0, d_0 # the dimensions of tile per batch;
     ###############################################################
@@ -93,7 +93,7 @@ class Layer3dBaseMethod(LayerBaseMethod):
         kernel_tile_size = self.K_h*self.K_w*self.K_d*self.Ci*c_0
 
         # calculate the total batch
-        total_batch = (self.H*self.W*self.D*self.Co) / ofmap_tile_size
+        total_batch = math.ceil((self.H*self.W*self.D*self.Co) / ofmap_tile_size)
 
         # ofmap + ifmap transfer
         total_transfer = ((ofmap_tile_size + ifmap_tile_size) *
@@ -115,7 +115,7 @@ class Layer3dBaseMethod(LayerBaseMethod):
         kernel_tile_size = self.K_h*self.K_w*self.K_d*self.Ci*c_0
 
         # calculate the total batch
-        total_batch = (self.H*self.W*self.D*self.Co) / ofmap_tile_size
+        total_batch = math.ceil((self.H*self.W*self.D*self.Co) / ofmap_tile_size)
 
         # ofmap + weight transfer
         total_transfer = (ofmap_tile_size + kernel_tile_size) * \
@@ -138,8 +138,9 @@ class Layer3dBaseMethod(LayerBaseMethod):
 
     def compute_bound_cycle(self, util_rate):
         # total number of ops
-        total_computation = ((self.H*self.W*self.D*self.Co) *
-                             (self.Ci*self.K_h*self.K_w*self.K_d))
+        total_computation = ((self.H*self.W*self.D*self.Co)
+                          * (self.Ci*self.K_h*self.K_w*self.K_d)
+                          / (self.S*self.S*self.S))
 
         # systolic array calculation capacity
         comp_cap = (self.A*self.A) * util_rate

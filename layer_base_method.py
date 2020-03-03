@@ -59,17 +59,17 @@ class LayerBaseMethod(object):
     # compute buffer utilization
     def buffer_utilization(self, x):
         # buffer = ofmap + weights + ifmap
-        return x[0]*x[1]*x[2]+self.Ci*self.K_h*self.K_w*x[0]+ \
-        self.Ci*(self.S*x[1]+2)*(self.S*x[2]+2)
+        return (x[0]*x[1]*x[2] + self.Ci*self.K_h*self.K_w*x[0]
+                + self.Ci*(self.S*x[1]+self.K_h/2)*(self.S*x[2]+self.K_h/2))
 
     # (ofmap + ifmap)*total_batch + (ofmap+weights)*Co/c_0
     def row_major_data_transfer(self, h_0, w_0, c_0):
         # calculate the total batch
-        total_batch = self.H*self.W*self.Co/(h_0*w_0*c_0)
+        total_batch = self.H*self.W*self.Co / (h_0*w_0*c_0)
 
         # ofmap, ifmap and kernel tile size
         ofmap_tile_size = h_0*w_0*c_0
-        ifmap_tile_size = (self.S*h_0+2)*(self.S*w_0+2)*self.Ci
+        ifmap_tile_size = (self.S*h_0+self.K_h/2)*(self.S*w_0+self.K_w/2)*self.Ci
         kernel_tile_size = self.K_h*self.K_w*self.Ci*c_0
 
         # ofmap + ifmap transfer
@@ -83,11 +83,11 @@ class LayerBaseMethod(object):
     # (ofmap + weights)*total_batch + (ofmap+ifmap)*(H*W)/(h_0*w_0)
     def channel_major_data_transfer(self, h_0, w_0, c_0):
         # calculate the total batch
-        total_batch = self.H*self.W*self.Co/(h_0*w_0*c_0)
+        total_batch = self.H*self.W*self.Co / (h_0*w_0*c_0)
 
         # ofmap and ifmap tile size
         ofmap_tile_size = h_0*w_0*c_0
-        ifmap_tile_size = (self.S*h_0+2)*(self.S*w_0+2)*self.Ci
+        ifmap_tile_size = (self.S*h_0+self.K_h/2)*(self.S*w_0+self.K_w/2)*self.Ci
         kernel_tile_size = self.K_h*self.K_w*self.Ci*c_0
 
         # ofmap + weight transfer
@@ -95,7 +95,7 @@ class LayerBaseMethod(object):
 
         # add additional data transfer
         total_transfer += (ofmap_tile_size + ifmap_tile_size) \
-            * self.H*self.W/(h_0*w_0)
+                        * self.H*self.W / (h_0*w_0*self.S*self.S)
 
         return total_transfer
 
@@ -104,14 +104,14 @@ class LayerBaseMethod(object):
         A = self.A
         total_usage = xi * area_size
         round_up_val = math.ceil(float(xi/A))*A \
-            * math.ceil(float(area_size)/A)*A
+                     * math.ceil(float(area_size)/A)*A
 
         return total_usage / round_up_val
 
     def compute_bound_cycle(self, util_rate):
         # total number of ops
-        total_computation = (self.H*self.W*self.Co)*\
-            (self.Ci*self.K_h*self.K_w)
+        total_computation = (self.H*self.W*self.Co) * \
+                            (self.Ci*self.K_h*self.K_w) / (self.S * self.S)
 
         # systolic array calculation capacity
         comp_cap = (self.A*self.A) * util_rate

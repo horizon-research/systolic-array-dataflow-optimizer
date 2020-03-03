@@ -58,6 +58,9 @@ class DeconvExhaustiveSearcher(LayerBaseMethod):
         # ifmap transfer
         total_transfer = ifmap_tile_size * total_batch
 
+        util_sys_arr = 0
+        util_cnt = 0
+
         for i in range(len(x)):
             if (round(x[i]) == 0):
                 continue
@@ -71,7 +74,8 @@ class DeconvExhaustiveSearcher(LayerBaseMethod):
             total_transfer += kernel_tile_size + ofmap_tile_size
 
             # compute the utilization of systolic array
-            util_sys_arr = self.systolic_array_utilization(x[i], area)
+            util_sys_arr += self.systolic_array_utilization(x[i], area)
+            util_cnt += 1
 
             # compute the cycle for compute-/memory-bound
             comp_bound_cycle = self.compute_bound_cycle(i, util_sys_arr, x[i])
@@ -79,6 +83,9 @@ class DeconvExhaustiveSearcher(LayerBaseMethod):
 
             # pick up the greater value as the actual cycle
             total_cycle += max(comp_bound_cycle, mem_bound_cycle)
+
+        if (util_cnt > 0):
+            util_sys_arr = util_sys_arr/util_cnt
 
         return (total_cycle, total_transfer, util_sys_arr)
 
@@ -92,6 +99,9 @@ class DeconvExhaustiveSearcher(LayerBaseMethod):
                 and x0[i] < remain_subkernels[i]:
                 x0[i] = x0[i]+self.A
                 sum_subs += self.A*sub_size*self.Ci
+
+            if x0[i] > remain_subkernels[i]:
+                x0[i] = remain_subkernels[i]
 
         return x0
 
@@ -132,10 +142,10 @@ class DeconvExhaustiveSearcher(LayerBaseMethod):
         # bounded ifmap.
         x1 = self.area_dimension(area)
 
-        while not all([sub == 0 for sub in remain_subkernels]):
+        while not all([sub <= 0.0 for sub in remain_subkernels]):
+    
             # set the initial guess;
             x0 = self.fill_bufw(remain_subkernels)
-
 
             util_buf = self.buffer_utilization(x0, x1)/self.buf_size
 

@@ -148,6 +148,23 @@ def system_config(args, meta_data):
 
     return meta_data
 
+def calculate_overall_performance(meta_data):
+    res = {
+        "total_cycle" : 0.0,
+        "total_transfer" : 0.0
+    }
+    for data in meta_data["dnn_result"]:
+        if isinstance(data['result'], list):
+            for item in data['result']:
+                res["total_cycle"] += item["total_cycle"]
+                res["total_transfer"] += item["total_transfer"]
+        else:
+            res["total_cycle"] += data['result']["total_cycle"]
+            res["total_transfer"] += data['result']["total_transfer"]
+
+    return res
+
+
 if __name__== "__main__":
     # initialize the result data;
     meta_data = {}
@@ -165,5 +182,7 @@ if __name__== "__main__":
 
     # start the optimization main routine
     meta_data["dnn_result"] = dnn_optimizer.opti_dnn(meta_data, hw_constraints)
+
+    meta_data["overall_result"] = calculate_overall_performance(meta_data)
 
     pprint.pprint(meta_data)
