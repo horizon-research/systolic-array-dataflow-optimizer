@@ -56,12 +56,13 @@ args = argparser.parse_args()
 # for 3D DNN layer is
 # (width, height, disparity, in_channel, out_channel,
 #  kenrel_width, kernel_height, kernel_disp, stride, Deconv?)
+# 
+# for MLP is 
+# [in_channel, out_channel]
 def import_dnn(filename, ifmap_dim, ifmap3d_dim):
     # a list to store the dnn configuration
     dnn = []
     weight_dim = []
-
-    is_2d_layer = True
 
     # The weight input format as follows:
     # [out_channel,kenrel_width,kernel_height,stride,Deconv?]
@@ -92,6 +93,14 @@ def import_dnn(filename, ifmap_dim, ifmap3d_dim):
                             ifmap_dim[1]/prev_layer["stride"], \
                             prev_layer["out_channel"]]
 
+        elif len(ls) == 4:
+            dnn.append({
+                "ifmap" : [int(ls[0])*int(ls[1]), int(ls[2])],
+                "out_channel" : int(ls[3]),
+                "type" : "MLP",
+                "Deconv?" : False,
+                "stride" : 1
+                })
         else:
             dnn.append({"ifmap" : ifmap3d_dim,
                         "out_channel" : int(ls[0]),

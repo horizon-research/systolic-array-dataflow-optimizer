@@ -13,6 +13,7 @@ import layer_optimizer
 import layer_static_method
 import layer_exhaustive_searcher
 import deconv_exhaustive_searcher
+from multi_layer_perceptron import MultiLayerPerceptron
 
 import layer3d_optimizer
 import layer3d_exhaustive_searcher
@@ -45,6 +46,9 @@ def setup(meta_data, hardware_constraints):
 
 def single_layer_optimization(data, sys_info):
     global method, enable, buffer_partition
+    if data["type"] == "MLP":
+        return MultiLayerPerceptron(data, sys_info).optimize()
+
     # if "static" option is enabled, it will be prioritized
     if enable["static"]:
       return layer_static_method.\

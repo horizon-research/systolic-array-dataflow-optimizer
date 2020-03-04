@@ -65,7 +65,7 @@ class LayerBaseMethod(object):
                 + self.Ci*(self.S*x[1]+self.K_h/2)*(self.S*x[2]+self.K_h/2))
 
     def total_batch_number(self, h_0, w_0, c_0):
-        return math.ceil(self.H*self.W*self.Co / (h_0*w_0*c_0))
+        return math.ceil(float(self.H*self.W*self.Co) / (h_0*w_0*c_0))
 
     # (ofmap + ifmap)*total_batch + (ofmap+weights)*Co/c_0
     def row_major_data_transfer(self, h_0, w_0, c_0):
