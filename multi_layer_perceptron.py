@@ -124,7 +124,10 @@ class MultiLayerPerceptron(object):
             "total_cycle": round(total_cycle),
             "systolic_array_utilization": util_sys_arr,
             "buffer_utilization": util_buf,
-            "x_0": x_0,
+            "buffer-partition [I,W,O]": [int(self.bufi_size), 
+                                         int(self.bufw_size), 
+                                         int(self.bufo_size)], 
+            "x_0": math.floor(x_0),
             "Bound" : bound
         }
 
