@@ -74,7 +74,7 @@ class MultiLayerPerceptron(object):
         A_w_uiti = math.ceil(self.Co/math.ceil(float(self.Co)/A))
 
         total_usage = x * self.Co
-        round_up_val = math.ceil(float(x/A))*A \
+        round_up_val = math.ceil(float(x/A)) * A \
                      * math.ceil(float(self.Co)/A)*A
 
         # the pct of extra delay due to output-stationary
