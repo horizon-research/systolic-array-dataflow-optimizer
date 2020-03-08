@@ -101,6 +101,15 @@ def import_dnn(filename, ifmap_dim, ifmap3d_dim):
                 "Deconv?" : False,
                 "stride" : 1
                 })
+        elif len(ls) == 2:
+            dnn.append({
+                "ifmap" : [int(ls[0])],
+                "in_channel" : int(ls[0]),
+                "out_channel" : int(ls[1]),
+                "type" : "FC",
+                "Deconv?" : False,
+                "stride" : 1
+                })
         else:
             dnn.append({"ifmap" : ifmap3d_dim,
                         "out_channel" : int(ls[0]),
