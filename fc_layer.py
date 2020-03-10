@@ -17,6 +17,7 @@ class FullyConnectedLayer(object):
     # input layer dimension
     Ci = None       # channels for ifmap
     Co = None       # channels for ofmap
+    Num = None      # number of same FC layer
 
     # on-chip buffer size
     bufi_size = None
@@ -37,6 +38,7 @@ class FullyConnectedLayer(object):
         # set up the new layer information
         self.Ci = layer_info["in_channel"]
         self.Co = layer_info["out_channel"]
+        self.Num = layer_info["num_of_layer"]
 
         self.bufi_size = self.Ci
 
@@ -117,8 +119,8 @@ class FullyConnectedLayer(object):
             total_cycle = total_transfer/self.B
 
         ret = {
-            "total_transfer": round(total_transfer),
-            "total_cycle": round(total_cycle),
+            "total_transfer": round(total_transfer)*self.Num,
+            "total_cycle": round(total_cycle)*self.Num,
             "systolic_array_utilization": util_sys_arr,
             "buffer_utilization": util_buf,
             "buffer-partition [I,W,O]": [int(self.bufi_size), 

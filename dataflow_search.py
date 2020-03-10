@@ -101,11 +101,12 @@ def import_dnn(filename, ifmap_dim, ifmap3d_dim):
                 "Deconv?" : False,
                 "stride" : 1
                 })
-        elif len(ls) == 2:
+        elif len(ls) == 3:
             dnn.append({
-                "ifmap" : [int(ls[0])],
-                "in_channel" : int(ls[0]),
-                "out_channel" : int(ls[1]),
+                "ifmap" : [int(ls[1])],
+                "in_channel" : int(ls[1]),
+                "out_channel" : int(ls[2]),
+                "num_of_layer" : int(ls[0]),
                 "type" : "FC",
                 "Deconv?" : False,
                 "stride" : 1
@@ -169,16 +170,22 @@ def system_config(args, meta_data):
 def calculate_overall_performance(meta_data):
     res = {
         "total_cycle" : 0.0,
-        "total_transfer" : 0.0
+        "each_layer_cycle" : [],
+        "total_transfer" : 0.0,
+        "each_layer_traffic" : [],
     }
     for data in meta_data["dnn_result"]:
         if isinstance(data['result'], list):
             for item in data['result']:
                 res["total_cycle"] += item["total_cycle"]
+                res["each_layer_cycle"].append(item["total_cycle"])
                 res["total_transfer"] += item["total_transfer"]
+                res["each_layer_traffic"].append(item["total_transfer"])
         else:
             res["total_cycle"] += data['result']["total_cycle"]
+            res["each_layer_cycle"].append(data['result']["total_cycle"])
             res["total_transfer"] += data['result']["total_transfer"]
+            res["each_layer_traffic"].append(data['result']["total_transfer"])
 
     return res
 
