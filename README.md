@@ -3,13 +3,11 @@
 This is a DNN dataflow optimizer for a particular hardware accelerator, systolic
 array. it is able to find a optimal or `approximately` optimal dataflow for a
 particular DNN for some hardware constraints, such as bandwidth and SRAM, etc.
-This repository is the artifact of our paper *ASV: Accelerated Stereo Vision System*.
-
-The original repository is here: <https://github.com/YuFengUofR/dataflow_optimizer>.
+This repository is the artifact of our paper [ASV: Accelerated Stereo Vision System](https://www.cs.rochester.edu/horizon/pubs/micro19-tigris.pdf) published at MICRO 2019.
 
 ## What's new
 
-The goal of this optimizer are followings:
+The goals of this optimizer are:
 
 * First, this optimizer is to aim to find a close-to optimal configuration in
   order to minimize the latency and reduce the data traffic at the same time.
