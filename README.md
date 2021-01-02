@@ -1,8 +1,8 @@
 # Systolic array dataflow optimizer
 
-This is a DNN dataflow optimizer for a particular hardware accelerator, systolic
-array. it is able to find a optimal or `approximately` optimal dataflow for a
-particular DNN for some hardware constraints, such as bandwidth and SRAM, etc.
+This is a DNN dataflow optimizer for a particular hardware accelerator, i.e., systolic
+array. It is able to find an optimal or an approximately optimal dataflow for a
+particular DNN given hardware constraints, such as bandwidth and SRAM, etc.
 This repository is the artifact of our paper [ASV: Accelerated Stereo Vision System](https://www.cs.rochester.edu/horizon/pubs/micro19-tigris.pdf) published at MICRO 2019.
 
 ## What's new
