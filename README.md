@@ -1,4 +1,4 @@
-# Dataflow optimizer
+# Systolic array dataflow optimizer
 
 This is a DNN dataflow optimizer for a particular hardware accelerator, systolic
 array. it is able to find a optimal or `approximately` optimal dataflow for a
